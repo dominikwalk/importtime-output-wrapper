@@ -99,7 +99,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     args = parser.parse_args(argv)
 
     all_imports = get_import_time(module=str(args.module))
-    print(args)
+
     if args.sorted:
         output_imports = sort_imports(imports=all_imports, sort_by=args.sorted)
     else:
