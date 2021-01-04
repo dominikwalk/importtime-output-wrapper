@@ -10,7 +10,7 @@ The implementaion prints out the output to the ```stderr```in string format. To 
 
 The ```importtime_output_wrapper``` can also sort the imported modules (and their nested imports) by the time they needed.
 
-It has a comamnd-line-interface that works as follows:
+It has a command-line interface that works as follows:
 
 ```console
 usage: importtime_output_wrapper.py [-h] [--sorted [{self,cumulative}]] module
