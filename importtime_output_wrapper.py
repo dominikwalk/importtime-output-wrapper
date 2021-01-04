@@ -119,7 +119,7 @@ def import_tree_to_waterfall(imports=List[Import]) -> str:
         offset = ((max_name_len - len(name)) + 3) * " "
         time_str = str(node.time)
         water = "=" * int(
-            (node[2] / max_time) * (79 - len(offset) - len(time_str) - len(name) - 2)
+            (node.time / max_time) * (79 - len(offset) - len(time_str) - len(name) - 2)
         )
         line_str = f"{name}{offset}{water}({time_str})\n"
         output_str += line_str
