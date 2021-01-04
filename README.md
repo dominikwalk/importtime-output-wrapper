@@ -71,7 +71,15 @@ codecs                       =======(1136)
 ....encodings.cp1252         =====(830)
 ....._signal                 (104)
 ......encodings.latin_1      =====(790)
-...
+[...]
+_functools                   (143)
+.functools                   ====(2355)
+..contextlib                 ====(2667)
+....importlib.util           ===========================================(25678)
+.....pywin32_bootstrap       =====(3240)
+......sitecustomize          =(1005)
+.......usercustomize         =(649)
+........site                 ===============(9226)
 ```
 The output is scaled to 79 characters. The number behind the bar indicates the import time in microseconds.
 
