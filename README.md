@@ -1,4 +1,4 @@
-# Importtime output wrapper
+# Python importtime output wrapper
 
 Starting from the Python3.7 release, the ```-X importtime``` option is available.
 It can be used to measure the import time for any python module, **including all nested imports**.
