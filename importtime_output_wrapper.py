@@ -3,7 +3,7 @@ import subprocess
 import sys
 import json
 import argparse
-from typing import List, Optional, Sequence
+from typing import List, NamedTuple, Optional, Sequence
 
 
 PATTERN_IMPORT_TIME = re.compile(r"^import time:\s+(\d+) \|\s+(\d+) \|(\s+.*)")
@@ -80,32 +80,92 @@ def import_tree_to_json_str(imports=List[Import]) -> str:
     return json.dumps(exclude_root, indent=2)
 
 
+def import_tree_to_waterfall(imports=List[Import]) -> str:
+    output_str = ""
+    waterfall_output = []
+    max_time = 0
+    max_name_len = 0
+    imp = NamedTuple("imp", [("name", str), ("space", int), ("time", int)])
+
+    def create_name_str(childs: List[Import]) -> None:
+        nonlocal max_time
+        nonlocal max_name_len
+        nonlocal waterfall_output
+        rendered_space = 0
+        if childs == []:
+            return
+        else:
+            for child in childs:
+                create_name_str(child.nested_imports)
+                waterfall_output.append(
+                    imp(name=child.name, space=rendered_space, time=child.t_self_us)
+                )
+
+                if child.t_self_us > max_time:
+                    max_time = child.t_self_us
+                if (len(child.name) + rendered_space) > max_name_len:
+                    max_name_len = len(child.name) + rendered_space
+
+                rendered_space += 1
+        return
+
+    create_name_str(imports[0]["nested_imports"])
+    header = "module name" + " " * ((max_name_len + 1) - len("module name")) + "|"
+    header += " import time (us)" + "\n" + "-" * 79 + "\n"
+    output_str += header
+
+    for node in waterfall_output:
+        name = node.space * "." + str(node.name)
+        offset = ((max_name_len - len(name)) + 3) * " "
+        time_str = str(node.time)
+        water = "=" * int(
+            (node[2] / max_time) * (79 - len(offset) - len(time_str) - len(name) - 2)
+        )
+        line_str = f"{name}{offset}{water}({time_str})\n"
+        output_str += line_str
+
+    return output_str
+
+
 def main(argv: Optional[Sequence[str]] = None) -> int:
 
     parser = argparse.ArgumentParser(
         description="""
         This script calls the python3 -X importtime implementation with a given module
         and parses the stderr output into a json format, which can then be used to
-        search or display the given information.
+        search or display the given information. It can also display the data as a
+        waterfall diagram in the terminal.
     """
     )
     parser.add_argument("module", help="the module to import")
+
     parser.add_argument(
-        "--sorted",
+        "--format",
+        nargs="?",
+        default="json",
+        choices=["json", "waterfall"],
+        help="output format",
+    )
+    parser.add_argument(
+        "--sort",
         nargs="?",
         choices=["self", "cumulative"],
         help="sort imported modules by import-time",
     )
+
     args = parser.parse_args(argv)
 
     all_imports = get_import_time(module=str(args.module))
 
-    if args.sorted:
-        output_imports = sort_imports(imports=all_imports, sort_by=args.sorted)
+    if args.sort:
+        output_imports = sort_imports(imports=all_imports, sort_by=args.sort)
     else:
         output_imports = all_imports
 
-    print(import_tree_to_json_str(output_imports))
+    if args.format == "json":
+        print(import_tree_to_json_str(output_imports))
+    elif args.format == "waterfall":
+        print(import_tree_to_waterfall(output_imports))
 
     return 0
 
