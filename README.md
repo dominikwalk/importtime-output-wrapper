@@ -71,6 +71,7 @@ codecs                       =======(1136)
 ....encodings.cp1252         =====(830)
 ....._signal                 (104)
 ......encodings.latin_1      =====(790)
+...
 ```
 The output is scaled to 79 characters. The number behind the bar indicates the import time in microseconds.
 
