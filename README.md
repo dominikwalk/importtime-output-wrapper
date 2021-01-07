@@ -1,4 +1,7 @@
-# Python importtime output wrapper
+[![Actions Status](https://github.com/dominikwalk/importtime_output_wrapper/workflows/main/badge.svg)](https://github.com/dominikwalk/importtime_output_wrapper/actions)
+[![Actions Status](https://github.com/dominikwalk/importtime_output_wrapper/workflows/pre-commit/badge.svg)](https://github.com/dominikwalk/importtime_output_wrapper/actions)
+
+# importtime output wrapper
 
 Starting from the Python3.7 release, the ```-X importtime``` option is available.
 It can be used to measure the import time for any python module, **including all nested imports**.
