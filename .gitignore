@@ -2,4 +2,3 @@
 .vscode
 .mypy_chache
 __pycache__
-tests
