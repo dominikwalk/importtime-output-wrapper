@@ -1,4 +1,6 @@
 .venv
 .vscode
 .mypy_chache
+.tox
+*.egg-info
 __pycache__
