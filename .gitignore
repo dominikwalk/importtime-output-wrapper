@@ -4,6 +4,6 @@
 .tox
 *.egg-info
 __pycache__
-.build
-.dist
+build
+dist
 .pytest_cache
