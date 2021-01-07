@@ -23,7 +23,7 @@ class Import(dict):
         self.nested_imports = childs
 
 
-def get_import_time(module: str) -> List[Import]:
+def get_import_time(module: str) -> str:
     try:
         ret = subprocess.run(
             (sys.executable, "-Ximporttime", "-c", f"import {module}"),
@@ -35,10 +35,14 @@ def get_import_time(module: str) -> List[Import]:
     except subprocess.CalledProcessError:
         raise InvalidInput(f'Invalid input: Could not import module "{module}"')
 
+    return ret.stderr
+
+
+def parse_import_time(s: str) -> List[Import]:
     root = Import("root", 0, 0, [])
     import_stack = [root]
 
-    for line in reversed(ret.stderr.splitlines()):
+    for line in reversed(s.splitlines()):
 
         m = PATTERN_IMPORT_TIME.match(line)
         if m:
@@ -155,7 +159,8 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
 
     args = parser.parse_args(argv)
 
-    all_imports = get_import_time(module=str(args.module))
+    raw_output = get_import_time(module=str(args.module))
+    all_imports = parse_import_time(raw_output)
 
     if args.sort:
         output_imports = sort_imports(imports=all_imports, sort_by=args.sort)
