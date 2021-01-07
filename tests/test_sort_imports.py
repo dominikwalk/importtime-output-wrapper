@@ -1,5 +1,5 @@
 import pytest
-from typing import List
+from typing import List, Tuple
 
 from importtime_output_wrapper import Import
 from importtime_output_wrapper import sort_imports
@@ -14,7 +14,7 @@ imp_a = Import(name="a", t_self=1, t_cumu=2, childs=[imp_a0, imp_a1])
 test_tree = [imp_a, imp_b]
 
 
-def _get_time_order(tree: List[Import], time_select="self") -> List[int]:
+def _get_time_order(tree: List[Import], time_select="self") -> List[Tuple[str, int]]:
     time_list = []
 
     def collect_time_recursive(children: List[Import]) -> None:
