@@ -1,7 +1,0 @@
-import time: self [us] | cumulative | imported package
-import time:         4 |          5 |   a0
-import time:         3 |          4 |   a1
-import time:         1 |          2 | a
-import time:         4 |          5 |   b0
-import time:         3 |          4 |   b1
-import time:         2 |          3 | b

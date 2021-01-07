@@ -56,7 +56,8 @@ def parse_import_time(s: str) -> List[Import]:
                 import_stack.pop()
             import_stack[-1].nested_imports.insert(0, new_imp)
             import_stack.append(new_imp)
-
+    if root.nested_imports == []:
+        raise InvalidInput("Invalid input: could not parse any imports")
     return [root]
 
 
