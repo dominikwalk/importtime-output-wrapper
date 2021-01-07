@@ -1,6 +1,5 @@
 from _pytest.capture import capsys
 import pytest
-import json
 
 import importtime_output_wrapper
 
