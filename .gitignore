@@ -1,8 +1,9 @@
 .venv
 .vscode
-.mypy_chache
+.mypy_cache
 .tox
 *.egg-info
 __pycache__
 .build
 .dist
+.pytest_cache
