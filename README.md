@@ -9,16 +9,22 @@ It can be used to measure the import time for any python module, **including all
 The official documentaion for this function can be found here:
 https://docs.python.org/3.7/using/cmdline.html#id5
 
-The implementaion prints out the output to the ```stderr```in string format. To actually use this output for benchmarking, I wrote this simple wrapper, that parses the output and puts it into a "usable" ```json``` format.
+# Installation
 
-Alternatively, the program can format the output as a waterfall digram. However, this feature only serves to provide a quick overview.
+`pip install importtime-output-wrapper`
+
+# Implemented features
+
+The implementaion prints out the output to the ```stderr``` in string format. To actually use this output for benchmarking, I wrote this simple wrapper, that parses the output and puts it into a usable ```json``` format.
+
+Alternatively, the tool can format the output as a waterfall digram. However, this feature only serves to provide a quick overview.
 
 The ```importtime_output_wrapper``` can also sort the imported modules (and their nested imports) by the time they needed.
 
 It has a command-line interface that works as follows:
 
 ```console
-usage: importtime_output_wrapper.py [-h] [--sort [{self,cumulative}]] module
+$ python -m importtime_output_wrapper [-h] [--sort [{self,cumulative}]] module
 ```
 
 As ```module``` any python module can be provided.
@@ -86,7 +92,7 @@ _functools                   (98)
 ```
 The output is scaled to 79 characters. The number behind the bar indicates the import time in microseconds.
 
-I personally used this program to sort the output of the ```-X importtime``` implementaion to index modules that were slowing down the startup of a larger project.
+I personally used this tool to sort the output of the ```-X importtime``` implementaion to index modules that were slowing down the startup of a larger project.
 Maybe someone else will find this functionality useful someday.
 
 **Note** that its output may be broken in multi-threaded application, as mentioned in the [official documentation](https://docs.python.org/3.7/using/cmdline.html#id5 "importtime documentation").
