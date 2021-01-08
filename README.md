@@ -9,10 +9,6 @@ It can be used to measure the import time for any python module, **including all
 The official documentaion for this function can be found here:
 https://docs.python.org/3.7/using/cmdline.html#id5
 
-# Installation
-
-`pip install importtime-output-wrapper`
-
 # Implemented features
 
 The implementaion prints out the output to the ```stderr``` in string format. To actually use this output for benchmarking, I wrote this simple wrapper, that parses the output and puts it into a usable ```json``` format.
