@@ -40,19 +40,22 @@ import time:      1749 |       2821 | zipimport
 [
   {
     "name": "_frozen_importlib_external",
-    "t_self_us": 550,
-    "t_cumulative_us": 550,
+    "depth": 1,
+    "t_self_us": 610,
+    "t_cumulative_us": 610,
     "nested_imports": []
   },
   {
     "name": "zipimport",
-    "t_self_us": 368,
-    "t_cumulative_us": 1049,
+    "depth": 1,
+    "t_self_us": 230,
+    "t_cumulative_us": 567,
     "nested_imports": [
       {
         "name": "time",
-        "t_self_us": 682,
-        "t_cumulative_us": 682,
+        "depth": 2,
+        "t_self_us": 337,
+        "t_cumulative_us": 337,
         "nested_imports": []
       }
     ]

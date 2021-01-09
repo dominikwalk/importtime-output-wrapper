@@ -18,10 +18,10 @@ class Import(dict):
         super().__init__()
         self.__dict__ = self
         self.name = name
+        self.depth = depth
         self.t_self_us = t_self
         self.t_cumulative_us = t_cumu
         self.nested_imports = childs
-        self.depth = depth
 
 
 def get_import_time(module: str) -> str:
