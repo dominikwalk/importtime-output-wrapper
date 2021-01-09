@@ -99,22 +99,19 @@ def import_tree_to_waterfall(imports=List[Import]) -> str:
         nonlocal max_time
         nonlocal max_name_len
         nonlocal waterfall_output
-        rendered_space = 0
         if childs == []:
             return
         else:
             for child in childs:
-                create_name_str(child.nested_imports)
                 waterfall_output.append(
-                    imp(name=child.name, space=child.depth, time=child.t_self_us)
+                    imp(name=child.name, space=child.depth - 1, time=child.t_self_us)
                 )
 
                 if child.t_self_us > max_time:
                     max_time = child.t_self_us
-                if (len(child.name) + rendered_space) > max_name_len:
-                    max_name_len = len(child.name) + rendered_space
-
-                rendered_space += 1
+                if (len(child.name) + child.depth) > max_name_len:
+                    max_name_len = len(child.name) + child.depth
+                create_name_str(child.nested_imports)
         return
 
     create_name_str(imports[0]["nested_imports"])
