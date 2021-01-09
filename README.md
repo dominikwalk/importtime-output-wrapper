@@ -32,7 +32,7 @@ import time: self [us] | cumulative | imported package
 import time:      1504 |       1504 | _frozen_importlib_external
 import time:      1073 |       1073 |   time
 import time:      1749 |       2821 | zipimport
-...
+[...]
 ```
 
 ...and insted if you call ```$ python -m importtime_output_wrapper os```, it will produce the following (reduced) output:
@@ -57,7 +57,7 @@ import time:      1749 |       2821 | zipimport
       }
     ]
   },
-  ...
+  [...]
 ]
 ```
 ## output as waterfall diagram
@@ -65,26 +65,26 @@ As an additional feature, the program can also display the output as a waterfall
 ```console
 module name                | import time (us)
 -------------------------------------------------------------------------------
-_frozen_importlib_external   ====(1425)
-time                         ====(1578)
-.zipimport                   ==(824)
-_codecs                      (226)
-codecs                       ========(2734)
-.encodings.aliases           =========(3077)
-..encodings                  ================(5461)
-...encodings.utf_8           ===(1110)
-....encodings.cp1252         ===(1265)
-....._signal                 (128)
-......encodings.latin_1      ===(1232)
+_frozen_importlib_external    ========(576)
+zipimport                     ====(280)
+.time                         ======(413)
+encodings                     =====================(1410)
+.codecs                       ==========(688)
+.._codecs                     =(75)
+.encodings.aliases            ===========(762)
+encodings.utf_8               =====(328)
 [...]
-_functools                   (98)
-.functools                   ======(2051)
-..contextlib                 =======(2606)
-....importlib.util           ======(2298)
-.....pywin32_bootstrap       ==============(4761)
-......sitecustomize          ====(1615)
-.......usercustomize         ===(1129)
-........site                 ===========================================(14494)
+site                          ===========================================(2865)
+.os                           ==========(684)
+..stat                        =======(509)
+..._stat                      (54)
+.._collections_abc            =================(1155)
+..posixpath                   =====(385)
+...genericpath                ====(277)
+._sitebuiltins                ====(289)
+._bootlocale                  ===(249)
+.._locale                     =(70)
+[...]
 ```
 The output is scaled to 79 characters. The number behind the bar indicates the import time in microseconds.
 
