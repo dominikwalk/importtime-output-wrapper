@@ -14,13 +14,14 @@ class InvalidInput(Exception):
 
 
 class Import(dict):
-    def __init__(self, name: str, t_self: int, t_cumu: int, childs: List):
+    def __init__(self, name: str, t_self: int, t_cumu: int, depth: int, childs: List):
         super().__init__()
         self.__dict__ = self
         self.name = name
         self.t_self_us = t_self
         self.t_cumulative_us = t_cumu
         self.nested_imports = childs
+        self.depth = depth
 
 
 def get_import_time(module: str) -> str:
@@ -39,7 +40,7 @@ def get_import_time(module: str) -> str:
 
 
 def parse_import_time(s: str) -> List[Import]:
-    root = Import("root", 0, 0, [])
+    root = Import("root", 0, 0, 0, [])
     import_stack = [root]
 
     for line in reversed(s.splitlines()):
@@ -49,8 +50,10 @@ def parse_import_time(s: str) -> List[Import]:
             t_self = int(m[1])
             t_cumu = int(m[2])
             name = str(m[3])
-            new_imp = Import(name=name.strip(), t_self=t_self, t_cumu=t_cumu, childs=[])
             depth = int((len(name) - len(name.lstrip()) - 1) / 2) + 1
+            new_imp = Import(
+                name=name.strip(), t_self=t_self, t_cumu=t_cumu, depth=depth, childs=[]
+            )
 
             for _ in range(len(import_stack) - depth):
                 import_stack.pop()
