@@ -106,7 +106,7 @@ def import_tree_to_waterfall(imports=List[Import]) -> str:
             for child in childs:
                 create_name_str(child.nested_imports)
                 waterfall_output.append(
-                    imp(name=child.name, space=rendered_space, time=child.t_self_us)
+                    imp(name=child.name, space=child.depth, time=child.t_self_us)
                 )
 
                 if child.t_self_us > max_time:
