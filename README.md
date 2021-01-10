@@ -19,7 +19,7 @@ The implementaion prints out the output to the ```stderr``` in string format. To
 
 Alternatively, the tool can format the output as a waterfall digram. However, this feature only serves to provide a quick overview.
 
-The ```importtime_output_wrapper``` can also sort the imported modules (and their nested imports) by the time they needed.
+The ```importtime-output-wrapper``` can also sort the imported modules (and their nested imports) by the time they needed.
 
 It has a command-line interface that works as follows:
 
@@ -39,7 +39,7 @@ import time:      1749 |       2821 | zipimport
 [...]
 ```
 
-...and insted if you call ```$ python -m importtime_output_wrapper os```, it will produce the following (reduced) output:
+...and insted if you call ```$ importtime-output-wrapper os```, it will produce the following (reduced) output:
 ```console
 [
   {
@@ -68,7 +68,7 @@ import time:      1749 |       2821 | zipimport
 ]
 ```
 ### output as waterfall diagram
-As an additional feature, the program can also display the output as a waterfall digram in the terminal. For the above example, calling ```$ python -m importtime_output_wrapper os --format waterfall``` results in the following (reduced) output:
+As an additional feature, the program can also display the output as a waterfall digram in the terminal. For the above example, calling ```$ importtime-output-wrapper os --format waterfall``` results in the following (reduced) output:
 ```console
 module name                | import time (us)
 -------------------------------------------------------------------------------
