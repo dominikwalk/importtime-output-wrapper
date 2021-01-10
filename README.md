@@ -9,7 +9,11 @@ It can be used to measure the import time for any python module, **including all
 The official documentaion for this function can be found here:
 https://docs.python.org/3.7/using/cmdline.html#id5
 
-# Implemented features
+## Installation
+
+`pip install importtime-output-wrapper`
+
+## Implemented features
 
 The implementaion prints out the output to the ```stderr``` in string format. To actually use this output for benchmarking, I wrote this simple wrapper, that parses the output and puts it into a usable ```json``` format.
 
@@ -25,7 +29,7 @@ $ python -m importtime_output_wrapper [-h] [--sort [{self,cumulative}]] module
 
 As ```module``` any python module can be provided.
 The optional argument ```--sort``` will sort the output either by the time every module needed to import (```--sort self```) or by the cumulative time (```--sort cumulative```).
-## output as json
+### output as json
 For example: calling ```$ python -X importtime -c "import os"``` would produce the following (reduced) output:
 ```console
 import time: self [us] | cumulative | imported package
@@ -63,7 +67,7 @@ import time:      1749 |       2821 | zipimport
   [...]
 ]
 ```
-## output as waterfall diagram
+### output as waterfall diagram
 As an additional feature, the program can also display the output as a waterfall digram in the terminal. For the above example, calling ```$ python -m importtime_output_wrapper os --format waterfall``` results in the following (reduced) output:
 ```console
 module name                | import time (us)
