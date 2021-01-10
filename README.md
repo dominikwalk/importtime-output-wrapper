@@ -24,7 +24,7 @@ The ```importtime_output_wrapper``` can also sort the imported modules (and thei
 It has a command-line interface that works as follows:
 
 ```console
-$ python -m importtime_output_wrapper [-h] [--sort [{self,cumulative}]] module
+$ importtime-output-wrapper [-h] [--sort [{self,cumulative}]] module
 ```
 
 As ```module``` any python module can be provided.
