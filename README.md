@@ -9,6 +9,8 @@ It can be used to measure the import time for any python module, **including all
 The official documentaion for this function can be found here:
 https://docs.python.org/3.7/using/cmdline.html#id5
 
+Any pull requests are welcome.🍰
+
 ## Installation
 
 `pip install importtime-output-wrapper`
