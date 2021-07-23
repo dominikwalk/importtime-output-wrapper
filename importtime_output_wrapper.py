@@ -27,7 +27,7 @@ class Import(dict):
 def get_import_time(module: str) -> str:
     """
     Call the importtime function as subprocess, pass all selected modules
-    and return the stderr output as a str.
+    and return the stderr output.
     """
     try:
         ret = subprocess.run(
@@ -38,8 +38,7 @@ def get_import_time(module: str) -> str:
             encoding="UTF-8",
         )
     except subprocess.CalledProcessError:
-        raise InvalidInput(
-            f'Invalid input: Could not import module "{module}"')
+        raise InvalidInput(f'Invalid input: Could not import module "{module}"')
 
     return ret.stderr
 
@@ -76,6 +75,7 @@ def sort_imports(imports: List[Import], sort_by="self") -> List[Import]:
     """
     Sort the unified tree structure according to the desired time key.
     """
+
     def sort_children(childs: List[Import]) -> None:
         if childs == []:
             return
@@ -120,8 +120,7 @@ def import_tree_to_waterfall(imports=List[Import]) -> str:
         else:
             for child in childs:
                 waterfall_output.append(
-                    imp(name=child.name, space=child.depth -
-                        1, time=child.t_self_us)
+                    imp(name=child.name, space=child.depth - 1, time=child.t_self_us)
                 )
 
                 if child.t_self_us > max_time:
@@ -132,8 +131,7 @@ def import_tree_to_waterfall(imports=List[Import]) -> str:
         return
 
     create_name_str(imports[0]["nested_imports"])
-    header = "module name" + " " * \
-        ((max_name_len + 1) - len("module name")) + "|"
+    header = "module name" + " " * ((max_name_len + 1) - len("module name")) + "|"
     header += " import time (us)" + "\n" + "-" * 79 + "\n"
     output_str += header
 
@@ -142,8 +140,7 @@ def import_tree_to_waterfall(imports=List[Import]) -> str:
         offset = ((max_name_len - len(name)) + 3) * " "
         time_str = str(node.time)
         water = "=" * int(
-            (node.time / max_time) *
-            (79 - len(offset) - len(time_str) - len(name) - 2)
+            (node.time / max_time) * (79 - len(offset) - len(time_str) - len(name) - 2)
         )
         line_str = f"{name}{offset}{water}({time_str})\n"
         output_str += line_str
