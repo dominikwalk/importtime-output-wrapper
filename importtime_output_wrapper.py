@@ -71,6 +71,24 @@ def parse_import_time(s: str) -> List[Import]:
     return [root]
 
 
+def prune_import_depth(imports: List[Import], depth: Optional[int] = None) -> List[Import]:
+    """
+    Prune the unified tree structure to the desired depth level.
+    """
+    def prune_children(childs: List[Import], depth: int):
+        if childs == []:
+            return
+        if depth == 0:
+            childs.clear()
+        for imp in childs:
+            prune_children(imp.nested_imports, depth - 1)
+
+    if depth is not None:
+        prune_children(imports, depth + 1)
+
+    return imports
+
+
 def sort_imports(imports: List[Import], sort_by="self") -> List[Import]:
     """
     Sort the unified tree structure according to the desired time key.
@@ -187,6 +205,12 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         type=int,
         help="width of entries in waterfall format (default 79)",
     )
+    parser.add_argument(
+        "--depth",
+        nargs="?",
+        type=int,
+        help="limit depth of output format (default unlimited)",
+    )
 
     args = parser.parse_args(argv)
     if args.time and args.format != "waterfall":
@@ -196,11 +220,12 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
 
     raw_output = get_import_time(module=str(args.module))
     all_imports = parse_import_time(raw_output)
+    pruned_imports = prune_import_depth(all_imports, args.depth)
 
     if args.sort:
-        output_imports = sort_imports(imports=all_imports, sort_by=args.sort)
+        output_imports = sort_imports(imports=pruned_imports, sort_by=args.sort)
     else:
-        output_imports = all_imports
+        output_imports = pruned_imports
 
     if args.format == "json":
         print(import_tree_to_json_str(output_imports))
