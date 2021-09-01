@@ -101,7 +101,7 @@ def import_tree_to_json_str(imports=List[Import]) -> str:
     return json.dumps(exclude_root, indent=2)
 
 
-def import_tree_to_waterfall(imports=List[Import], time_key="self") -> str:
+def import_tree_to_waterfall(imports=List[Import], time_key="self", width=79) -> str:
     """
     Print the imported modules tree as a waterfall diagram.
     """
@@ -133,8 +133,8 @@ def import_tree_to_waterfall(imports=List[Import], time_key="self") -> str:
         return
 
     create_name_str(imports[0]["nested_imports"])
-    header = "module name" + " " * ((max_name_len + 1) - len("module name")) + "|"
-    header += " import time (us)" + "\n" + "-" * 79 + "\n"
+    header = "module name" + " " * ((max_name_len + 1) - len("module name")) + " "
+    header += " import time (us)" + "\n" + "-" * width + "\n"
     output_str += header
 
     for node in waterfall_output:
@@ -142,7 +142,7 @@ def import_tree_to_waterfall(imports=List[Import], time_key="self") -> str:
         offset = ((max_name_len - len(name)) + 3) * " "
         time_str = str(node.time)
         water = "=" * int(
-            (node.time / max_time) * (79 - len(offset) - len(time_str) - len(name) - 2)
+            (node.time / max_time) * (width - len(offset) - len(time_str) - len(name) - 2)
         )
         line_str = f"{name}{offset}{water}({time_str})\n"
         output_str += line_str
@@ -181,10 +181,18 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         choices=["self", "cumulative"],
         help="time to use in waterfall format (default self)",
     )
+    parser.add_argument(
+        "--width",
+        nargs="?",
+        type=int,
+        help="width of entries in waterfall format (default 79)",
+    )
 
     args = parser.parse_args(argv)
     if args.time and args.format != "waterfall":
         parser.error("--time requires format to be set to waterfall (--format waterfall)")
+    if args.width and args.format != "waterfall":
+        parser.error("--length requires format to be set to waterfall (--format waterfall)")
 
     raw_output = get_import_time(module=str(args.module))
     all_imports = parse_import_time(raw_output)
@@ -197,7 +205,8 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     if args.format == "json":
         print(import_tree_to_json_str(output_imports))
     elif args.format == "waterfall":
-        print(import_tree_to_waterfall(output_imports, time_key=args.time or "self"))
+        print(import_tree_to_waterfall(output_imports, time_key=args.time or "self",
+                                       width=args.width or 79))
 
     return 0
 
