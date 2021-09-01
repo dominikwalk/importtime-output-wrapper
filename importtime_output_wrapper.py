@@ -1,5 +1,6 @@
 import re
 import subprocess
+import shutil
 import sys
 import json
 import argparse
@@ -203,7 +204,8 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         "--width",
         nargs="?",
         type=int,
-        help="width of entries in waterfall format (default 79)",
+        help="width of entries in waterfall format (default to "
+             "environement variable COLUMNS or terminal's width)",
     )
     parser.add_argument(
         "--depth",
@@ -230,8 +232,9 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     if args.format == "json":
         print(import_tree_to_json_str(output_imports))
     elif args.format == "waterfall":
-        print(import_tree_to_waterfall(output_imports, time_key=args.time or "self",
-                                       width=args.width or 79))
+        width = args.width or shutil.get_terminal_size().columns
+        time = args.time or "self"
+        print(import_tree_to_waterfall(output_imports, time_key=time, width=width))
 
     return 0
 
