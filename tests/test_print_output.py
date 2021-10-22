@@ -4,6 +4,7 @@ from importtime_output_wrapper import Import
 
 import json
 import re
+import shutil
 
 imp_a0 = Import(name="a0", t_self=4, t_cumu=5, depth=2, childs=[])
 imp_a1 = Import(name="a1", t_self=3, t_cumu=4, depth=2, childs=[])
@@ -24,18 +25,23 @@ def test_import_tree_to_json():
 def test_import_tree_to_waterfall():
     test_waterfall_output = import_tree_to_waterfall(test_tree).splitlines()
 
-    PATTERN_HEADER_LINE0 = re.compile(r"module name\s*\| import time \(us\)")
-    PATTERN_HEADER_LINE1 = re.compile("-" * 79)
+    print(test_waterfall_output)
+    terminal_width = int(shutil.get_terminal_size().columns) - 1 or 79
+
+    PATTERN_HEADER_LINE0 = re.compile(r"module name\s*\  import time \(us\)")
+    PATTERN_HEADER_LINE1 = re.compile("-" * terminal_width)
 
     PATTERN_WATERFALL_LINE = re.compile(r".+\s+[=]+\(\d+\)\s*")
 
     valid_output = False
 
+    # check header
     if (PATTERN_HEADER_LINE0.match(test_waterfall_output[0])) and (
         PATTERN_HEADER_LINE1.match(test_waterfall_output[1])
     ):
-        print(test_waterfall_output[0])
         valid_output = True
+
+    assert valid_output == True
 
     for line in test_waterfall_output[2:]:
         if not PATTERN_WATERFALL_LINE.match(line):

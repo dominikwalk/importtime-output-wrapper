@@ -72,10 +72,13 @@ def parse_import_time(s: str) -> List[Import]:
     return [root]
 
 
-def prune_import_depth(imports: List[Import], depth: Optional[int] = None) -> List[Import]:
+def prune_import_depth(
+    imports: List[Import], depth: Optional[int] = None
+) -> List[Import]:
     """
     Prune the unified tree structure to the desired depth level.
     """
+
     def prune_children(childs: List[Import], depth: int):
         if childs == []:
             return
@@ -139,7 +142,9 @@ def import_tree_to_waterfall(imports=List[Import], time_key="self", width=79) ->
             return
         else:
             for child in childs:
-                time = {"self": child.t_self_us, "cumulative": child.t_cumulative_us}[time_key]
+                time = {"self": child.t_self_us, "cumulative": child.t_cumulative_us}[
+                    time_key
+                ]
                 waterfall_output.append(
                     imp(name=child.name, space=child.depth - 1, time=time)
                 )
@@ -161,7 +166,8 @@ def import_tree_to_waterfall(imports=List[Import], time_key="self", width=79) ->
         offset = ((max_name_len - len(name)) + 3) * " "
         time_str = str(node.time)
         water = "=" * int(
-            (node.time / max_time) * (width - len(offset) - len(time_str) - len(name) - 2)
+            (node.time / max_time)
+            * (width - len(offset) - len(time_str) - len(name) - 2)
         )
         line_str = f"{name}{offset}{water}({time_str})\n"
         output_str += line_str
@@ -205,7 +211,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         nargs="?",
         type=int,
         help="width of entries in waterfall format (default to "
-             "environement variable COLUMNS or terminal's width)",
+        "environement variable COLUMNS or terminal's width)",
     )
     parser.add_argument(
         "--depth",
@@ -216,9 +222,13 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
 
     args = parser.parse_args(argv)
     if args.time and args.format != "waterfall":
-        parser.error("--time requires format to be set to waterfall (--format waterfall)")
+        parser.error(
+            "--time requires format to be set to waterfall (--format waterfall)"
+        )
     if args.width and args.format != "waterfall":
-        parser.error("--length requires format to be set to waterfall (--format waterfall)")
+        parser.error(
+            "--length requires format to be set to waterfall (--format waterfall)"
+        )
 
     raw_output = get_import_time(module=str(args.module))
     all_imports = parse_import_time(raw_output)
