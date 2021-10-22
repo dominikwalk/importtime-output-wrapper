@@ -1,5 +1,6 @@
 import re
 import subprocess
+import shutil
 import sys
 import json
 import argparse
@@ -71,6 +72,27 @@ def parse_import_time(s: str) -> List[Import]:
     return [root]
 
 
+def prune_import_depth(
+    imports: List[Import], depth: Optional[int] = None
+) -> List[Import]:
+    """
+    Prune the unified tree structure to the desired depth level.
+    """
+
+    def prune_children(childs: List[Import], depth: int):
+        if childs == []:
+            return
+        if depth == 0:
+            childs.clear()
+        for imp in childs:
+            prune_children(imp.nested_imports, depth - 1)
+
+    if depth is not None:
+        prune_children(imports, depth + 1)
+
+    return imports
+
+
 def sort_imports(imports: List[Import], sort_by="self") -> List[Import]:
     """
     Sort the unified tree structure according to the desired time key.
@@ -101,7 +123,7 @@ def import_tree_to_json_str(imports=List[Import]) -> str:
     return json.dumps(exclude_root, indent=2)
 
 
-def import_tree_to_waterfall(imports=List[Import]) -> str:
+def import_tree_to_waterfall(imports=List[Import], time_key="self", width=79) -> str:
     """
     Print the imported modules tree as a waterfall diagram.
     """
@@ -115,24 +137,28 @@ def import_tree_to_waterfall(imports=List[Import]) -> str:
         nonlocal max_time
         nonlocal max_name_len
         nonlocal waterfall_output
+        nonlocal time_key
         if childs == []:
             return
         else:
             for child in childs:
+                time = {"self": child.t_self_us, "cumulative": child.t_cumulative_us}[
+                    time_key
+                ]
                 waterfall_output.append(
-                    imp(name=child.name, space=child.depth - 1, time=child.t_self_us)
+                    imp(name=child.name, space=child.depth - 1, time=time)
                 )
 
-                if child.t_self_us > max_time:
-                    max_time = child.t_self_us
+                if time > max_time:
+                    max_time = time
                 if (len(child.name) + child.depth) > max_name_len:
                     max_name_len = len(child.name) + child.depth
                 create_name_str(child.nested_imports)
         return
 
     create_name_str(imports[0]["nested_imports"])
-    header = "module name" + " " * ((max_name_len + 1) - len("module name")) + "|"
-    header += " import time (us)" + "\n" + "-" * 79 + "\n"
+    header = "module name" + " " * ((max_name_len + 1) - len("module name")) + " "
+    header += " import time (us)" + "\n" + "-" * width + "\n"
     output_str += header
 
     for node in waterfall_output:
@@ -140,11 +166,16 @@ def import_tree_to_waterfall(imports=List[Import]) -> str:
         offset = ((max_name_len - len(name)) + 3) * " "
         time_str = str(node.time)
         water = "=" * int(
-            (node.time / max_time) * (79 - len(offset) - len(time_str) - len(name) - 2)
+            (node.time / max_time)
+            * (width - len(offset) - len(time_str) - len(name) - 2)
         )
         line_str = f"{name}{offset}{water}({time_str})\n"
         output_str += line_str
 
+    min_width = round(1 / (node.time / max_time) + len(time_str) + len(name) + 2)
+    if width < min_width:
+        warning_msg = f"WARNING: The waterfall diagram may not be displayed correctly if the set width is too small!"
+        output_str += warning_msg
     return output_str
 
 
@@ -173,21 +204,51 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         choices=["self", "cumulative"],
         help="sort imported modules by import-time",
     )
+    parser.add_argument(
+        "--time",
+        nargs="?",
+        choices=["self", "cumulative"],
+        help="time to use in waterfall format (default self)",
+    )
+    parser.add_argument(
+        "--width",
+        nargs="?",
+        type=int,
+        help="width of entries in waterfall format (default to "
+        "environement variable COLUMNS or terminal's width)",
+    )
+    parser.add_argument(
+        "--depth",
+        nargs="?",
+        type=int,
+        help="limit depth of output format (default unlimited)",
+    )
 
     args = parser.parse_args(argv)
+    if args.time and args.format != "waterfall":
+        parser.error(
+            "--time requires format to be set to waterfall (--format waterfall)"
+        )
+    if args.width and args.format != "waterfall":
+        parser.error(
+            "--length requires format to be set to waterfall (--format waterfall)"
+        )
 
     raw_output = get_import_time(module=str(args.module))
     all_imports = parse_import_time(raw_output)
+    pruned_imports = prune_import_depth(all_imports, args.depth)
 
     if args.sort:
-        output_imports = sort_imports(imports=all_imports, sort_by=args.sort)
+        output_imports = sort_imports(imports=pruned_imports, sort_by=args.sort)
     else:
-        output_imports = all_imports
+        output_imports = pruned_imports
 
     if args.format == "json":
         print(import_tree_to_json_str(output_imports))
     elif args.format == "waterfall":
-        print(import_tree_to_waterfall(output_imports))
+        width = args.width or shutil.get_terminal_size().columns
+        time = args.time or "self"
+        print(import_tree_to_waterfall(output_imports, time_key=time, width=width))
 
     return 0
 

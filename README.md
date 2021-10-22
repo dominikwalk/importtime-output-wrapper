@@ -72,7 +72,7 @@ import time:      1749 |       2821 | zipimport
 ### output as waterfall diagram
 As an additional feature, the program can also display the output as a waterfall digram in the terminal. For the above example, calling ```$ importtime-output-wrapper os --format waterfall``` results in the following (reduced) output:
 ```console
-module name                | import time (us)
+module name                   import time (us)
 -------------------------------------------------------------------------------
 _frozen_importlib_external    ========(576)
 zipimport                     ====(280)
@@ -95,7 +95,35 @@ site                          ===========================================(2865)
 .._locale                     =(70)
 [...]
 ```
-The output is scaled to 79 characters. The number behind the bar indicates the import time in microseconds.
+The output is scaled to 79 characters by default. The number behind the bar indicates the import time in microseconds. Both the width of the output and the time used in the waterfall diagram can be adjusted, as described below.
+
+## Further settings
+### Depth
+To adjust the output to the depth of the modules the paramater ```--depth``` can be used.
+The following shows an output with different depths in each case:
+
+(Depth = No Limit)
+```console
+io                            ======(273)
+.abc                          =====(237)
+.._abc                        (36)
+site                          =========================================(1701)
+.os                           ==================(739)
+..stat                        ======(254)
+..._stat                      =(50)
+```
+(Depth = 2)
+```console
+io                            ======(273)
+.abc                          =====(237)
+site                          =========================================(1701)
+.os                           ==================(739)
+```
+
+### Time used in the waterfall diagram
+If the display as a waterfall diagram has been selected, the parameter ```--time``` can be used to set whether the "self" time or the "cumulative" time is to be used to display the diagram.
+### Width of the watefall diagram
+If the display as a waterfall diagram was selected, the parameter ```--width``` can be used to set how wide the diagram should be displayed. Note that a too small width can lead to no meaningful representation of the measured times. By default a width of 79 characters is used.
 
 I personally used this tool to sort the output of the ```-X importtime``` implementaion to index modules that were slowing down the startup of a larger project.
 Maybe someone else will find this functionality useful someday.
