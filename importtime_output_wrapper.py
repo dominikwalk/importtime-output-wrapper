@@ -172,6 +172,10 @@ def import_tree_to_waterfall(imports=List[Import], time_key="self", width=79) ->
         line_str = f"{name}{offset}{water}({time_str})\n"
         output_str += line_str
 
+    min_width = round(1 / (node.time / max_time) + len(time_str) + len(name) + 2)
+    if width < min_width:
+        warning_msg = f"WARNING: The waterfall diagram may not be displayed correctly if the set width is too small!"
+        output_str += warning_msg
     return output_str
 
 
