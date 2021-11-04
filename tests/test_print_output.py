@@ -1,10 +1,10 @@
-from importtime_output_wrapper import import_tree_to_json_str
-from importtime_output_wrapper import import_tree_to_waterfall
-from importtime_output_wrapper import Import
-
 import json
 import re
 import shutil
+
+from importtime_output_wrapper import Import
+from importtime_output_wrapper import import_tree_to_json_str
+from importtime_output_wrapper import import_tree_to_waterfall
 
 imp_a0 = Import(name="a0", t_self=4, t_cumu=5, depth=2, childs=[])
 imp_a1 = Import(name="a1", t_self=3, t_cumu=4, depth=2, childs=[])

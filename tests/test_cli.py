@@ -1,5 +1,5 @@
-from _pytest.capture import capsys
 import pytest
+from _pytest.capture import capsys
 
 import importtime_output_wrapper
 

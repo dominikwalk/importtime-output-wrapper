@@ -1,10 +1,13 @@
-import re
-import subprocess
-import shutil
-import sys
-import json
 import argparse
-from typing import List, NamedTuple, Optional, Sequence
+import json
+import re
+import shutil
+import subprocess
+import sys
+from typing import List
+from typing import NamedTuple
+from typing import Optional
+from typing import Sequence
 
 
 PATTERN_IMPORT_TIME = re.compile(r"^import time:\s+(\d+) \|\s+(\d+) \|(\s+.*)")
@@ -60,7 +63,11 @@ def parse_import_time(s: str) -> List[Import]:
             name = str(m[3])
             depth = int((len(name) - len(name.lstrip()) - 1) / 2) + 1
             new_imp = Import(
-                name=name.strip(), t_self=t_self, t_cumu=t_cumu, depth=depth, childs=[]
+                name=name.strip(),
+                t_self=t_self,
+                t_cumu=t_cumu,
+                depth=depth,
+                childs=[],
             )
 
             for _ in range(len(import_stack) - depth):
@@ -73,7 +80,8 @@ def parse_import_time(s: str) -> List[Import]:
 
 
 def prune_import_depth(
-    imports: List[Import], depth: Optional[int] = None
+    imports: List[Import],
+    depth: Optional[int] = None,
 ) -> List[Import]:
     """
     Prune the unified tree structure to the desired depth level.
@@ -146,7 +154,7 @@ def import_tree_to_waterfall(imports=List[Import], time_key="self", width=79) ->
                     time_key
                 ]
                 waterfall_output.append(
-                    imp(name=child.name, space=child.depth - 1, time=time)
+                    imp(name=child.name, space=child.depth - 1, time=time),
                 )
 
                 if time > max_time:
@@ -167,7 +175,7 @@ def import_tree_to_waterfall(imports=List[Import], time_key="self", width=79) ->
         time_str = str(node.time)
         water = "=" * int(
             (node.time / max_time)
-            * (width - len(offset) - len(time_str) - len(name) - 2)
+            * (width - len(offset) - len(time_str) - len(name) - 2),
         )
         line_str = f"{name}{offset}{water}({time_str})\n"
         output_str += line_str
@@ -187,7 +195,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         and parses the stderr output into a json format, which can then be used to
         search or display the given information. It can also display the data as a
         waterfall diagram in the terminal.
-    """
+    """,
     )
     parser.add_argument("module", help="the module to import")
 
@@ -227,11 +235,11 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     args = parser.parse_args(argv)
     if args.time and args.format != "waterfall":
         parser.error(
-            "--time requires format to be set to waterfall (--format waterfall)"
+            "--time requires format to be set to waterfall (--format waterfall)",
         )
     if args.width and args.format != "waterfall":
         parser.error(
-            "--length requires format to be set to waterfall (--format waterfall)"
+            "--length requires format to be set to waterfall (--format waterfall)",
         )
 
     raw_output = get_import_time(module=str(args.module))

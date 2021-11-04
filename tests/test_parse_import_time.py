@@ -1,8 +1,8 @@
 import pytest
 
 from importtime_output_wrapper import Import
-from importtime_output_wrapper import parse_import_time
 from importtime_output_wrapper import InvalidInput
+from importtime_output_wrapper import parse_import_time
 
 
 imp_a0 = Import(name="a0", t_self=4, t_cumu=5, depth=2, childs=[])

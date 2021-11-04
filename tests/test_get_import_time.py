@@ -1,11 +1,12 @@
-import pytest
 import re
+
+import pytest
 
 from importtime_output_wrapper import get_import_time
 from importtime_output_wrapper import InvalidInput
 
 PATTERN_IMPORTTIME_HEADER = re.compile(
-    r"import time: self [us] | cumulative | imported package"
+    r"import time: self [us] | cumulative | imported package",
 )
 PATTERN_IMPORT_TIME = re.compile(r"^import time:\s+(\d+) \|\s+(\d+) \|(\s+.*)")
 

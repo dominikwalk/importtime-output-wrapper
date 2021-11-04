@@ -1,5 +1,7 @@
+from typing import List
+from typing import Tuple
+
 import pytest
-from typing import List, Tuple
 
 from importtime_output_wrapper import Import
 from importtime_output_wrapper import sort_imports
