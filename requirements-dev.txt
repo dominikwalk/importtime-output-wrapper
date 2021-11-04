@@ -1,1 +1,4 @@
 pytest
+tox
+pre-commit
+mypy
