@@ -8,6 +8,7 @@ from typing import List
 from typing import NamedTuple
 from typing import Optional
 from typing import Sequence
+from typing import Tuple
 
 
 PATTERN_IMPORT_TIME = re.compile(r"^import time:\s+(\d+) \|\s+(\d+) \|(\s+.*)")
@@ -28,23 +29,33 @@ class Import(dict):
         self.nested_imports = childs
 
 
-def get_import_time(module: str) -> str:
+def get_import_time(import_cmd: str, module_only: bool) -> Tuple[str, str]:
     """
     Call the importtime function as subprocess, pass all selected modules
-    and return the stderr output.
+    and return the stdout and stderr output.
     """
     try:
+        if module_only:
+            call_str = f"import {import_cmd}"
+        else:
+            call_str = import_cmd
+
         ret = subprocess.run(
-            (sys.executable, "-Ximporttime", "-c", f"import {module}"),
+            (sys.executable, "-Ximporttime", "-c", call_str),
             check=True,
-            stdout=subprocess.DEVNULL,
+            stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             encoding="UTF-8",
         )
     except subprocess.CalledProcessError:
-        raise InvalidInput(f'Invalid input: Could not import module "{module}"')
+        if module_only:
+            raise InvalidInput(f"Invalid input: Could not import module '{import_cmd}'")
+        else:
+            raise InvalidInput(
+                f"Invalid input: '{import_cmd}' is not a valid python command",
+            )
 
-    return ret.stderr
+    return ret.stdout, ret.stderr
 
 
 def parse_import_time(s: str) -> List[Import]:
@@ -197,7 +208,22 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         waterfall diagram in the terminal.
     """,
     )
-    parser.add_argument("module", help="the module to import")
+
+    parser.add_argument(
+        "-m",
+        "--module",
+        required=False,
+        type=str,
+        help="full python command; same as the 'python -c' option",
+    )
+
+    parser.add_argument(
+        "-c",
+        "--command",
+        required=False,
+        type=str,
+        help="python module to import",
+    )
 
     parser.add_argument(
         "--format",
@@ -232,6 +258,13 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         help="limit depth of output format (default unlimited)",
     )
 
+    parser.add_argument(
+        "-v",
+        "--verbose",
+        action="store_true",
+        help="limit depth of output format (default unlimited)",
+    )
+
     args = parser.parse_args(argv)
     if args.time and args.format != "waterfall":
         parser.error(
@@ -242,7 +275,29 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
             "--length requires format to be set to waterfall (--format waterfall)",
         )
 
-    raw_output = get_import_time(module=str(args.module))
+    if args.module and args.command:
+        raise parser.error(
+            "Either a module ('-m') or a command ('-c') can be used, but not both",
+        )
+    if not args.module and not args.command:
+        raise parser.error(
+            "Either a module ('-m') or a command ('-c') must be provided",
+        )
+    elif args.module:
+        import_command = args.module
+        module_only = True
+    elif args.command:
+        import_command = args.command
+        module_only = False
+
+    std_out, raw_output = get_import_time(
+        import_cmd=import_command,
+        module_only=module_only,
+    )
+
+    if args.verbose:
+        print(std_out)
+
     all_imports = parse_import_time(raw_output)
     pruned_imports = prune_import_depth(all_imports, args.depth)
 

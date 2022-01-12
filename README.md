@@ -26,14 +26,18 @@ The ```importtime-output-wrapper``` can also sort the imported modules (and thei
 It has a command-line interface that works as follows:
 
 ```console
-$ importtime_output_wrapper [-h] [--format [{json,waterfall}]]
-                                 [--sort [{self,cumulative}]]
-                                 [--time [{self,cumulative}]]
-                                 [--width [WIDTH]] [--depth [DEPTH]]
-                                 module
+$ usage: importtime_output_wrapper.py [-h] [-m MODULE] [-c COMMAND]
+                                    [--format [{json,waterfall}]]
+                                    [--sort [{self,cumulative}]]
+                                    [--time [{self,cumulative}]]
+                                    [--width [WIDTH]] [--depth [DEPTH]] [-v]
 ```
 
-As ```module``` any python module can be provided.
+The tool has to different modes for providing a module:
+1. Using the ```-m``` option any python module can be provided.
+2. Using the ```-c``` option any valid python command can be provided.
+
+
 The optional argument ```--sort``` will sort the output either by the time every module needed to import (```--sort self```) or by the cumulative time (```--sort cumulative```).
 ### output as json
 For example: calling ```$ python -X importtime -c "import os"``` would produce the following (reduced) output:
@@ -45,7 +49,7 @@ import time:      1749 |       2821 | zipimport
 [...]
 ```
 
-...and insted if you call ```$ importtime-output-wrapper os```, it will produce the following (reduced) output:
+...and insted if you call ```$ importtime-output-wrapper -m os```, it will produce the following (reduced) output:
 ```console
 [
   {
@@ -74,7 +78,7 @@ import time:      1749 |       2821 | zipimport
 ]
 ```
 ### output as waterfall diagram
-As an additional feature, the program can also display the output as a waterfall digram in the terminal. For the above example, calling ```$ importtime-output-wrapper os --format waterfall``` results in the following (reduced) output:
+As an additional feature, the program can also display the output as a waterfall digram in the terminal. For the above example, calling ```$ importtime-output-wrapper -m os --format waterfall``` results in the following (reduced) output:
 ```console
 module name                   import time (us)
 -------------------------------------------------------------------------------
@@ -128,6 +132,28 @@ site                          =========================================(1701)
 If the display as a waterfall diagram has been selected, the parameter ```--time``` can be used to set whether the "self" time or the "cumulative" time is to be used to display the diagram.
 ### Width of the watefall diagram
 If the display as a waterfall diagram was selected, the parameter ```--width``` can be used to set how wide the diagram should be displayed. Note that a too small width can lead to no meaningful representation of the measured times. By default a width of 79 characters is used.
+### Verbose mode
+If the ``-v`` or ``-verbose`` flag is set, the program will not only output the import time in the desired format, but also the ``std_out``.
+
+Consider the following example:
+```console
+$ importtime-output-wrapper -c "import os; print('foo bar\nbaz')" -v
+```
+Leads to the following output:
+```console
+foo bar
+baz
+
+[
+  {
+    "name": "_frozen_importlib_external",
+    "depth": 1,
+    "t_self_us": 822,
+    "t_cumulative_us": 1584,
+    "nested_imports": [
+
+  [...]
+```
 
 I personally used this tool to sort the output of the ```-X importtime``` implementaion to index modules that were slowing down the startup of a larger project.
 Maybe someone else will find this functionality useful someday.
