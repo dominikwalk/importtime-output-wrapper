@@ -26,11 +26,11 @@ The ```importtime-output-wrapper``` can also sort the imported modules (and thei
 It has a command-line interface that works as follows:
 
 ```console
-$ usage: importtime_output_wrapper.py [-h] [-m MODULE] [-c COMMAND]
-                                    [--format [{json,waterfall}]]
-                                    [--sort [{self,cumulative}]]
-                                    [--time [{self,cumulative}]]
-                                    [--width [WIDTH]] [--depth [DEPTH]] [-v]
+$ importtime_output_wrapper [-h] [-m MODULE] [-c COMMAND]
+                            [--format [{json,waterfall}]]
+                            [--sort [{self,cumulative}]]
+                            [--time [{self,cumulative}]]
+                            [--width [WIDTH]] [--depth [DEPTH]] [-v]
 ```
 
 The tool has to different modes for providing a module:
