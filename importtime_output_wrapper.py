@@ -214,7 +214,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         "--module",
         required=False,
         type=str,
-        help="full python command; same as the 'python -c' option",
+        help="python module to import",
     )
 
     parser.add_argument(
@@ -222,7 +222,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         "--command",
         required=False,
         type=str,
-        help="python module to import",
+        help="full python command; same as the 'python -c' option",
     )
 
     parser.add_argument(
