@@ -1,4 +1,4 @@
-[![Actions Status](https://github.com/dominikwalk/importtime_output_wrapper/workflows/coverage/badge.svg)](https://github.com/dominikwalk/importtime_output_wrapper/actions)
+[![Actions Status](https://github.com/dominikwalk/importtime_output_wrapper/workflows/tests/badge.svg)](https://github.com/dominikwalk/importtime_output_wrapper/actions)
 [![pre-commit.ci status](https://results.pre-commit.ci/badge/github/dominikwalk/importtime-output-wrapper/main.svg)](https://results.pre-commit.ci/latest/github/dominikwalk/importtime-output-wrapper/main)
 
 # importtime output wrapper
