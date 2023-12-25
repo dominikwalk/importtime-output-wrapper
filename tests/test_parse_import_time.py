@@ -21,7 +21,6 @@ with open("tests/sample_importtime_output") as f:
 
 @pytest.mark.parametrize(("test_input", "expected"), ((test_output_string, test_tree),))
 def test_parse_std_err(test_input, expected):
-
     assert parse_import_time(test_input) == expected
 
 

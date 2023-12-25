@@ -66,7 +66,6 @@ def parse_import_time(s: str) -> List[Import]:
     import_stack = [root]
 
     for line in reversed(s.splitlines()):
-
         m = PATTERN_IMPORT_TIME.match(line)
         if m:
             t_self = int(m[1])
@@ -199,7 +198,6 @@ def import_tree_to_waterfall(imports=List[Import], time_key="self", width=79) ->
 
 
 def main(argv: Optional[Sequence[str]] = None) -> int:
-
     parser = argparse.ArgumentParser(
         description="""
         This script calls the python3 -X importtime implementation with a given module
@@ -317,5 +315,4 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
 
 
 if __name__ == "__main__":
-
     exit(main())
